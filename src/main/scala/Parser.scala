@@ -131,10 +131,13 @@ object Parser {
        }{
          if(kind=="block"){
            if(!block.isEmpty()){
-             if(level==1 && block=="1"){
+             if(level==1 && block=="1" || block=="2"){
                array+=(( block, field, valuesSoFar))
              } else{
-               array+=((parent , block, valuesSoFar))
+               if(field.isEmpty())
+                 array+=((parent , block, valuesSoFar))
+               else 
+                 array+=((parent , field, valuesSoFar))
              }
            }
            if(level==1)parent=value 
@@ -142,9 +145,10 @@ object Parser {
            field = ""
            valuesSoFar = ""
          }else if(kind=="field"){
+            
             if(block.isEmpty()){//TO DO 
               //raise Error(u'block for field "%s" must be specified' % value)
-            }else{
+            }else{              
               if(!field.isEmpty()){
                   array+=((parent, field, valuesSoFar))
               }
