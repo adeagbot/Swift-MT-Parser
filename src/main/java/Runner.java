@@ -5,7 +5,8 @@ public class Runner {
     
 	  //if(args.length==2){
 		//main.scala.Wife.main(args);
-		main.scala.Swift.main(args); 
+		//main.scala.Swift.main(args); 
+		main.scala.Fabricator.main(args);
 //	  }else{
 //		  System.err.println("Arguments missing from command");
 //	  }	  
