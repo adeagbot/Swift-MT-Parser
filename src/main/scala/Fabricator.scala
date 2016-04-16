@@ -12,7 +12,7 @@ import java.io.PrintWriter
 object Fabricator extends App {
 
 val DATE_FORMAT = new SimpleDateFormat("HHmmyyMMdd") 
-//val DATE_FORMAT2 = new SimpleDateFormat("yyMMddHHmm") 
+val DATE_OUTPUT_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss") 
 
 val samples=10
 
@@ -239,22 +239,28 @@ def add50a50f50k(list:Array[(String,String,String,String)])
   }).toArray  
 }
 
+// val timestamp = System.currentTimeMillis().toString
+
+def uuid = java.util.UUID.randomUUID.toString
 
 val  n=add50a50f50k(tot.toArray)
 
-println (n.map(_._1).distinct.length)
-
+val uuid_lookup=n.map(_._1).distinct.map(i=>(i,uuid)).toMap;
 
 val writer = new PrintWriter(path+"mt_message.txt", "UTF-8");
-val one=n.filter(i=>i._7=="50A").take(1)
 
-n.foreach(
-    x=>writer.println(x._1+","+x._2+","+x._3+","+x._4+","+x._5+","+x._6+","+x._7+","+x._8.mkString("|"))
+val mt=n.map(x=>(uuid_lookup.get(x._1).get,x._2,x._3,x._4,x._5,x._6,x._7,x._8))
+
+val one=mt.filter(i=>i._4=="103" && i._7=="50A").take(1)
+
+mt.foreach(
+    x=>writer.println(x._1+"|"+DATE_OUTPUT_FORMAT.format(new java.util.Date(x._2.toLong))+"|"+x._3+"|"+x._4+"|"+x._5+"|"+x._6+"|"+x._7+"|"+x._8.mkString(";"))
 )
- 
-n.filter(_._1==one(0)._1)
+
+
+mt.filter(_._1==one(0)._1)
  .sortBy(_._6)
- .foreach(x=>println(x._1+","+x._2+","+x._3+","+x._4+","+x._5+","+x._6+","+x._7+","+x._8.mkString("|")))
+ .foreach(x=>println(x._1+"|"+DATE_OUTPUT_FORMAT.format(new java.util.Date(x._2.toLong))+"|"+x._3+"|"+x._4+"|"+x._5+"|"+x._6+"|"+x._7+"|"+x._8.mkString(";")))
 
 writer.close
 
