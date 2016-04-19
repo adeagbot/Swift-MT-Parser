@@ -90,7 +90,7 @@ object Parser {
                     state =State.INFIELDKEY
                     text = ""
                }else if (c == '\n'){
-                 list+=((level,"value", ""))  
+                // list+=((level,"value", ""))  
                }else if (c!=' ' && c!='\t'){//InValue 
                     state = State.INVALUE
                     text = c+""
@@ -150,7 +150,7 @@ object Parser {
     var block = ""
     var field = ""
     var valueSoFar = "" 
-    val lines = ArrayBuffer[String]();
+    val multiLines = ArrayBuffer[String]();
     val array = ArrayBuffer[(String,String,String)]()
     for {
       (level,kind,value)  <-list  
@@ -159,29 +159,34 @@ object Parser {
          case "block"=>{
              if (level == 1) {
                 if(!block.isEmpty ) {
-                  array += ((block, field, valueSoFar))
+                  if(multiLines.length==1){
+                    array += ((block, field, valueSoFar))
+                  }else{
+                    array += ((block, field, multiLines.mkString(";")))
+                  }                  
                 }
                 block = value
                 field=""
                 valueSoFar=""
+                multiLines.clear()
             } else {
               field = value
             }            
          }
          case "field"=>{            
             if(!field.isEmpty && !valueSoFar.isEmpty) {
-                if(lines.length==1){
+                if(multiLines.length==1){
                   array += ((block, field, valueSoFar))
                 }else{
-                  array += ((block, field, lines.mkString(";")))
+                  array += ((block, field, multiLines.mkString(";")))
                 }
             }
-            lines.clear()
+            multiLines.clear()
             valueSoFar = ""
             field=value
          }
          case "value"=>{
-             if(!field.isEmpty ) lines+=value
+             multiLines+=value
              valueSoFar+=value
          }
          case _=>{
@@ -189,8 +194,14 @@ object Parser {
          }           
        }
    }
-   // # Yield the last item.
-   if(valueSoFar.length>0)array+=(( block, field, valueSoFar))       
+   // add the last item.
+   if(valueSoFar.length>0){
+      if(multiLines.length==1){
+        array += ((block, field, valueSoFar))
+      }else{
+        array += ((block, field, multiLines.mkString(";")))
+      }       
+   }      
    array.toArray
  }
   
