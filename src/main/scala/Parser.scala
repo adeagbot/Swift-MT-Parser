@@ -195,14 +195,12 @@ object Parser {
        }
    }
    // add the last item.
-   if(valueSoFar.length>0){
-      if(multiLines.length==1){
-        array += ((block, field, valueSoFar))
-      }else{
-        array += ((block, field, multiLines.mkString(";")))
-      }       
-   }      
-   array.toArray
+    if(multiLines.length==1){
+      array += ((block, field, valueSoFar))
+    }else{
+      array += ((block, field, multiLines.mkString(";")))
+    }           
+    array.toArray
  }
   
   def encode(text:String)={
