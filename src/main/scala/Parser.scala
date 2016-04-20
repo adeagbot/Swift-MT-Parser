@@ -31,9 +31,9 @@ import javax.xml.bind.DatatypeConverter
 
 object Parser {
   def uuid = java.util.UUID.randomUUID.toString
-  def encode(text:String)=DatatypeConverter.printBase64Binary(text.getBytes("UTF-8"))
+  def encode(text:String)=DatatypeConverter.printBase64Binary(text.getBytes(StandardCharsets.UTF_8))
   
-  def decode(text:String)=new String(DatatypeConverter.parseBase64Binary(text),"UTF-8")    
+  def decode(text:String)=new String(DatatypeConverter.parseBase64Binary(text),StandardCharsets.UTF_8)    
   
   def messageItems(message:Array[String]):Array[(Int,String,String)] = {
         var state =State.BEFORESTARTOFBLOCK
